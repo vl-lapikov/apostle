@@ -1,0 +1,240 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+    <style>
+      html,
+      body {
+        margin: 0;
+        padding: 0;
+        height: 100%;
+        width: 100%;
+        background-color: #000;
+      }
+      .container {
+        height: inherit;
+        width: inherit;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+      }
+      .content {
+        width: 100vh;
+        height: 100vh;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        position: relative;
+        overflow: hidden;
+      }
+
+      .apostle {
+        position: relative;
+        width: 100%;
+        height: 100%;
+      }
+
+      .snapshot-image {
+        width: 100%;
+        height: auto;
+      }
+
+      .is-hidden {
+          visibility: hidden;
+      }
+
+      .top-layer {
+        position: absolute;
+        top: 0;
+        right: 0;
+        bottom: 0;
+        left: 0;
+      }
+
+      .webcam {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+      }
+
+      #webcam-stream {
+        display: flex;
+        flex-shrink: 0;
+      }
+
+      .webcam-landscape {
+        height: 100%;
+        width: auto;
+      }
+
+      .webcam-portrair {
+        height: auto;
+        width: 100%;
+      }
+
+      .nav {
+        flex: 1;
+        color: gray;
+        height: 100vh;
+        max-width: 60px;
+        display: flex;
+        justify-content: center;
+      }
+
+      .nav svg {
+        width: 35px;
+      }
+
+      @media (orientation: portrait) {
+        .content {
+          width: 100vw;
+          height: 100vw;
+        }
+        .nav {
+          height: 100vw;
+        }
+      }
+    </style>
+  </head>
+  <body>
+    <button id="snap">Snap it</button>
+    <button id="save">Save it</button>
+    <div id="container" class="container">
+      <div id="left" class="nav">
+        <svg xmlns="http://www.w3.org/2000/svg" fill="currentColor" class="bi bi-chevron-compact-left" viewBox="0 0 16 16">
+          <path fill-rule="evenodd" d="M9.224 1.553a.5.5 0 0 1 .223.67L6.56 8l2.888 5.776a.5.5 0 1 1-.894.448l-3-6a.5.5 0 0 1 0-.448l3-6a.5.5 0 0 1 .67-.223z"/>
+        </svg>
+      </div>
+      <div class="content">
+        <div class="top-layer webcam">
+          <video
+            autoplay
+            playsinline
+            id="webcam-stream"
+            crossorigin="anonymous"
+          />
+        </div>
+        <div class="top-layer snapshot">
+          <img crossorigin="anonymous" id="webcam-snapshot" class="apostle is-hidden" />
+        </div>
+        <img id="foreground" class="apostle" src="apostles/1.svg" />
+      </div>
+      <div id="right" class="nav">
+        <svg xmlns="http://www.w3.org/2000/svg" fill="currentColor" class="bi bi-chevron-compact-right" viewBox="0 0 16 16">
+          <path fill-rule="evenodd" d="M6.776 1.553a.5.5 0 0 1 .671.223l3 6a.5.5 0 0 1 0 .448l-3 6a.5.5 0 1 1-.894-.448L9.44 8 6.553 2.224a.5.5 0 0 1 .223-.671z"/>
+        </svg>
+      </div>
+    </div>
+    <script>
+      const constraints = {
+        video: {
+          facingMode: "user",
+        },
+        audio: false,
+      };
+
+      var apostel = 1;
+
+      $( document ).ready(function() {
+        navigator.mediaDevices.getUserMedia(constraints).then((stream) => {
+          const settings = stream.getVideoTracks()[0].getSettings();
+          const foreground = document.getElementById("foreground");
+          const webcam = document.getElementById("webcam-stream");
+          const snapshot = document.getElementById("webcam-snapshot");
+          const snapButton = document.getElementById("snap");
+          const saveButton = document.getElementById("save");
+
+          const ratio = settings.aspectRatio;
+          const webcamClass = ratio > 1 ? "webcam-landscape" : "webcam-portrait";
+
+          const drawImages = function (images) {
+            const canvas = document.createElement("CANVAS");
+            const ctx = canvas.getContext("2d");
+
+            canvas.width = 2500;
+            canvas.height = 2500;
+
+            for (let i in images) {
+              const image = images[i];
+              const isImage = image.tagName.toLowerCase() === "img";
+              const props = {
+                width: isImage ? "width" : "offsetWidth",
+                height: isImage ? "height" : "offsetHeight",
+              };
+
+              ctx.drawImage(image, 0, 0, image[props.width], image[props.height]);
+            }
+
+            return canvas.toDataURL("image/png");
+          };
+
+          const handleSnap = function () {
+            const snapshotImage = drawImages([webcam]);
+            snapshot.classList.remove('is-hidden');
+
+            snapshot.src = snapshotImage;
+          };
+
+          const offerDownload = function (content) {
+            const link = document.createElement("A");
+            link.setAttribute("download", "Selfie with Apostol X.png");
+            link.setAttribute("href", content);
+
+            document.body.appendChild(link);
+            link.click();
+            document.body.removeChild(link);
+          };
+
+          const handleSave = function () {
+            const image = new Image();
+            image.setAttribute("crossorigin", "anonymous");
+
+            snapshot.classList.add('is-hidden');
+
+            image.addEventListener("load", function () {
+
+              image.width = 100;
+              image.height = 100;
+
+              console.log(image);
+
+              const snapshotImage = drawImages([webcam, image]);
+              // snapshot.src = snapshotImage;
+              offerDownload(snapshotImage);
+            });
+
+            image.src = '/apostles/foo.svg';
+          };
+
+          snapButton.addEventListener("click", handleSnap);
+          saveButton.addEventListener("click", handleSave);
+
+          webcam.classList.add(webcamClass);
+
+          webcam.srcObject = stream;
+          webcam.play();
+        });
+        $('#left').click(function() {
+          apostel = (apostel === 1) ? 5 : apostel - 1
+          $('#foreground').fadeOut(1000, function() {
+            $(this).attr('src', 'apostles/' + apostel + '.svg');
+            $('#foreground').fadeIn(1000)
+          });
+        });
+        $('#right').click(function() {
+          apostel = (apostel === 5) ? 1 : apostel + 1
+            $('#foreground').fadeOut(1000, function() {
+              $(this).attr('src', 'apostles/' + apostel + '.svg');
+              $('#foreground').fadeIn(1000)
+            });
+        });
+        $('.nav').hover(function() {
+          $(this).css('color', 'white');
+        }, function() {
+          $(this).css('color', 'gray');
+        })
+      });
+
+    </script>
+  </body>
+</html>
