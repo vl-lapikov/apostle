@@ -9,6 +9,7 @@
       }
       .container {
         display: flex;
+        height: 100vh;
       }
       .nav {
         flex-grow: 1;
@@ -16,10 +17,19 @@
       }
       .content {
         flex-basis: auto;
+        flex-shrink: 0;
         width: 100vh;
         height: 100vh;
         background-color: tomato;
-        flex-shrink: 0;
+      }
+      @media (orientation: portrait) {
+        .container {
+          flex-direction: column;
+        }
+        .content {
+          width: 100vw;
+          height: 100vw;
+        }
       }
     </style>
   </head>
