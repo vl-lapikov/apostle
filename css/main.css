@@ -45,9 +45,6 @@ body {
   display: flex;
   justify-content: center;
 }
-video {
-  width: 100%;
-}
 
 .apostle {
   position: relative;
