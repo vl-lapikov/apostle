@@ -1,0 +1,33 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <style>
+      html,
+      body {
+        margin: 0;
+        padding: 0;
+      }
+      .container {
+        display: flex;
+      }
+      .nav {
+        flex-grow: 1;
+        background-color: cadetblue;
+      }
+      .content {
+        flex-basis: auto;
+        width: 100vh;
+        height: 100vh;
+        background-color: tomato;
+        flex-shrink: 0;
+      }
+    </style>
+  </head>
+  <body>
+    <div class="container">
+      <div class="nav"></div>
+      <div class="content"></div>
+      <div class="nav"></div>
+    </div>
+  </body>
+</html>
