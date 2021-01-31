@@ -17,6 +17,7 @@ $( document ).ready(function() {
 
         $( "#orientation" ).html(webcamClass);
         webcam.classList.add(webcamClass);
+        webcam.style.transform = "scale(-1,1)";
         webcam.srcObject = stream;
         webcam.play();
     });
@@ -25,7 +26,7 @@ $( document ).ready(function() {
         apostel = (apostel === 1) ? 5 : apostel - 1
         $('#foreground').fadeOut(1000, function() {
             $(this).attr('src', 'svg/' + apostel + '.svg');
-            $('#foreground').fadeIn(1000)
+            $(this).fadeIn(1000)
         });
     });
 
@@ -33,7 +34,7 @@ $( document ).ready(function() {
         apostel = (apostel === 5) ? 1 : apostel + 1
         $('#foreground').fadeOut(1000, function() {
             $(this).attr('src', 'svg/' + apostel + '.svg');
-            $('#foreground').fadeIn(1000)
+            $(this).fadeIn(1000)
         });
     });
 
