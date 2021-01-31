@@ -13,10 +13,10 @@ $( document ).ready(function() {
         const webcam = document.getElementById("webcam-stream");
 
         const ratio = settings.aspectRatio;
-        const webcamClass = ratio > 1 ? "webcam-landscape" : "webcam-portrait";
+//        const webcamClass = ratio > 1 ? "webcam-landscape" : "webcam-portrait";
 
-        $('#webcam-stream').addClass(webcamClass);
-        $('#ratio').html(ratio);
+//        $('#webcam-stream').addClass(webcamClass);
+//        $('#ratio').html(ratio);
 
         webcam.srcObject = stream;
         webcam.play();
@@ -58,16 +58,16 @@ $( document ).ready(function() {
         }
     })
 
-    $(window).on("orientationchange", function( event ) {
-        navigator.mediaDevices.getUserMedia(constraints).then((stream) => {
-            const settings = stream.getVideoTracks()[0].getSettings();
-            $('#ratio').html(settings.aspectRatio);
-        });
-
-        if (event.orientation === 'portrait') {
-            $('#webcam-stream').addClass('webcam-portrait').removeClass('webcam-landscape');
-        } else {
-            $('#webcam-stream').addClass('webcam-landscape').removeClass('webcam-portrait');
-        }
-    });
+//    $(window).on("orientationchange", function( event ) {
+//        navigator.mediaDevices.getUserMedia(constraints).then((stream) => {
+//            const settings = stream.getVideoTracks()[0].getSettings();
+//            $('#ratio').html(settings.aspectRatio);
+//        });
+//
+//        if (event.orientation === 'portrait') {
+//            $('#webcam-stream').addClass('webcam-portrait').removeClass('webcam-landscape');
+//        } else {
+//            $('#webcam-stream').addClass('webcam-landscape').removeClass('webcam-portrait');
+//        }
+//    });
 });
