@@ -9,8 +9,13 @@ var apostel = 1;
 
 $( document ).ready(function() {
     navigator.mediaDevices.getUserMedia(constraints).then((stream) => {
+        const settings = stream.getVideoTracks()[0].getSettings();
         const webcam = document.getElementById("webcam-stream");
 
+        const ratio = settings.aspectRatio;
+        const webcamClass = ratio > 1 ? "webcam-landscape" : "webcam-portrait";
+
+        webcam.classList.add(webcamClass);
         webcam.srcObject = stream;
         webcam.play();
     });
@@ -50,4 +55,12 @@ $( document ).ready(function() {
             $navSvg.addClass('nav-right-down').removeClass('nav-right-down-white');
         }
     })
+
+    $(window).on("orientationchange", function( event ) {
+        if (event.orientation === 'portrait') {
+            $('#webcam-stream').addClass('webcam-portrait').removeClass('webcam-landscape');
+        } else {
+            $('#webcam-stream').addClass('webcam-landscape').removeClass('webcam-portrait');
+        }
+    });
 });
