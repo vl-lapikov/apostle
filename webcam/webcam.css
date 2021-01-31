@@ -58,8 +58,8 @@ body {
 }
 
 .webcam-portrait {
-  height: auto;
-  width: 100%;
+  width: 100vw;
+  height: 100vw;
 }
 
 .nav-left-up {

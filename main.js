@@ -13,11 +13,10 @@ $( document ).ready(function() {
         const webcam = document.getElementById("webcam-stream");
 
         const ratio = settings.aspectRatio;
-//        const webcamClass = ratio > 1 ? "webcam-landscape" : "webcam-portrait";
+        const webcamClass = ratio > 1 ? "webcam-landscape" : "webcam-portrait";
 
-//        $('#webcam-stream').addClass(webcamClass);
-//        $('#ratio').html(ratio);
-
+        $( "#orientation" ).html(webcamClass);
+        webcam.classList.add(webcamClass);
         webcam.srcObject = stream;
         webcam.play();
     });
@@ -57,17 +56,21 @@ $( document ).ready(function() {
             $navSvg.addClass('nav-right-down').removeClass('nav-right-down-white');
         }
     })
-
-//    $(window).on("orientationchange", function( event ) {
-//        navigator.mediaDevices.getUserMedia(constraints).then((stream) => {
-//            const settings = stream.getVideoTracks()[0].getSettings();
-//            $('#ratio').html(settings.aspectRatio);
-//        });
-//
-//        if (event.orientation === 'portrait') {
-//            $('#webcam-stream').addClass('webcam-portrait').removeClass('webcam-landscape');
-//        } else {
-//            $('#webcam-stream').addClass('webcam-landscape').removeClass('webcam-portrait');
-//        }
-//    });
+    $(window).on("orientationchange", function( event ) {
+        isPortrait = false
+        if (typeof event.orientation !== "undefined") {
+            if (event.orientation === 'portrait') {
+                isPortrait = true
+            }
+        } else if (window.orientation === 0 || window.orientation === 180) {
+            isPortrait = true
+        }
+        if (isPortrait) {
+            $( "#orientation" ).html('webcam-portrait');
+            $('#webcam-stream').addClass('webcam-portrait').removeClass('webcam-landscape');
+        } else {
+            $( "#orientation" ).html('webcam-landscape');
+            $('#webcam-stream').addClass('webcam-landscape').removeClass('webcam-portrait');
+        }
+    });
 });
